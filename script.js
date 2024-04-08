@@ -3,35 +3,55 @@ document.getElementById('saveButton').addEventListener('click', saveMemo);
 
 async function saveMemo() {
     var memoText = document.getElementById('memoInput').value;
-    if (memoText) {
-        var password = "your-encryption-key"; // 実際のアプリではユーザー入力などから取得
+    var password = document.getElementById('keyInput').value; // ユーザーから暗号化キーを取得
+    if (memoText && password) {
         var encryptedMemo = await encryptText(memoText, password);
+        var timestamp = new Date().getTime(); // タイムスタンプを生成
+        var memoObject = { encryptedMemo, timestamp }; // オブジェクトとして保存
         
         var memos = JSON.parse(localStorage.getItem('memos')) || [];
-        memos.push(encryptedMemo);
+        memos.push(memoObject);
         localStorage.setItem('memos', JSON.stringify(memos));
         
-        addMemoToDOM(memoText); // ユーザーには暗号化前のテキストを表示
+        addMemoToDOM(memoText, timestamp); // タイムスタンプも渡す
         document.getElementById('memoInput').value = ''; // 入力フィールドをクリア
+    } else {
+        alert("メモと暗号化キーを両方入力してください。");
     }
 }
 
 async function loadMemos() {
     var memos = JSON.parse(localStorage.getItem('memos')) || [];
-    var password = "your-encryption-key"; // 同上
-    for (let encryptedMemo of memos) {
-        var memoText = await decryptText(encryptedMemo, password);
-        addMemoToDOM(memoText);
+    var password = prompt("メモを読み込むための暗号化キーを入力してください。");
+    if (password) {
+        try {
+            for (let {encryptedMemo, timestamp} of memos) {
+                var memoText = await decryptText(encryptedMemo, password);
+                addMemoToDOM(memoText, timestamp);
+            }
+        } catch (e) {
+            alert("暗号化キーが正しくありません。");
+        }
     }
 }
 
-// encryptText と decryptText 関数はここに追加
+function addMemoToDOM(memoText, timestamp) {
+    var memo = document.createElement('div');
+    memo.textContent = memoText;
+    memo.setAttribute('data-timestamp', timestamp); // タイムスタンプを属性として追加
 
-function addMemoToDOM(memoText) {
-    // この関数の中身は変更なし
+    var deleteButton = document.createElement('button');
+    deleteButton.textContent = '削除';
+    deleteButton.onclick = function() {
+        memo.remove();
+        removeMemoFromStorage(timestamp);
+    };
+    memo.appendChild(deleteButton);
+    document.getElementById('memoContainer').appendChild(memo);
 }
 
-function removeMemoFromStorage(memoText) {
-    // 復号化されたテキストでフィルタするため、このロジックを修正する必要があるかもしれません
-    // 特に、メモを一意に識別できるような仕組み（IDの導入など）を考える必要があります
+function removeMemoFromStorage(timestamp) {
+    var memos = JSON.parse(localStorage.getItem('memos')) || [];
+    var updatedMemos = memos.filter(memoObject => memoObject.timestamp !== timestamp);
+    localStorage.setItem('memos', JSON.stringify(updatedMemos));
 }
