@@ -55,3 +55,22 @@ function removeMemoFromStorage(timestamp) {
     var updatedMemos = memos.filter(memoObject => memoObject.timestamp !== timestamp);
     localStorage.setItem('memos', JSON.stringify(updatedMemos));
 }
+
+// これはあくまでデモンストレーションです
+async function encryptText(plainText, password) {
+    try {
+        // 実際の暗号化プロセスをここに実装
+        return btoa(plainText); // Base64で簡易エンコード
+    } catch (e) {
+        console.error("Encryption failed", e);
+    }
+}
+
+async function decryptText(encryptedText, password) {
+    try {
+        // 実際の復号化プロセスをここに実装
+        return atob(encryptedText); // Base64で簡易デコード
+    } catch (e) {
+        console.error("Decryption failed", e);
+    }
+}
