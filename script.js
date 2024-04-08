@@ -24,7 +24,7 @@ document.getElementById('loadButton').addEventListener('click', loadMemos);
 
 async function loadMemos() {
     var memos = JSON.parse(localStorage.getItem('memos')) || [];
-    var password = prompt("メモを読み込むための暗号化キーを入力してください。");
+    var password = document.getElementById('keyInput').value; // HTMLのinputからキーを取得
     if (password) {
         try {
             for (let {encryptedMemo, timestamp} of memos) {
