@@ -7,11 +7,17 @@
 </head>
 <body>
     <h1>メモアプリ</h1>
-    <!-- 暗号化キー入力用のフィールドを追加 -->
-    <label for="keyInput">暗号化キー:</label>
-    <input type="text" id="keyInput">
-    <textarea id="memoInput" rows="4" cols="50"></textarea>
-    <button id="saveButton">保存</button>
+    <div id="keyInputContainer">
+        <!-- 暗号化キー入力用のフィールドをpasswordタイプに変更し、プレースホルダーを追加 -->
+        <label for="keyInput">暗号化キー:</label>
+        <input type="password" id="keyInput" placeholder="キーを入力してください">
+    </div>
+    <div id="memoInputContainer">
+        <textarea id="memoInput" rows="4" cols="50" placeholder="ここにメモを入力"></textarea>
+    </div>
+    <div id="saveButtonContainer">
+        <button id="saveButton">保存</button>
+    </div>
     <div id="memoContainer"></div>
     <script src="script.js"></script>
 </body>
